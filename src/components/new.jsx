@@ -4,6 +4,7 @@ function newPage(){
     return (
         <>
             This is new page
+            some more changes
         </>
     )
 }
