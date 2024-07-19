@@ -70,7 +70,6 @@ function Detail({handleCart}) {
             <input
               type="number"
               onChange={setCart}
-              type="number"
               value={count}
               className="w-16 p-2 border border-gray-300 rounded-md"
               min="1"
