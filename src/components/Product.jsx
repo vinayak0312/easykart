@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import StarStrokeRounded from "../star-stroke-rounded.svg";
 function Product(data) {
   return (
     <div className="p-3 flex flex-col justify-between gap-3 border relative">
@@ -9,11 +10,11 @@ function Product(data) {
         <h1 className="text-xl">{data.name}</h1>
         <h2 className="text-gray-800">Rating: {data.rate}/5</h2>
         <div className="flex items-center">
-          <img src="src/star-stroke-rounded.svg" alt="rating"></img>
-          <img src="src/star-stroke-rounded.svg" alt="rating"></img>
-          <img src="src/star-stroke-rounded.svg" alt="rating"></img>
-          <img src="src/star-stroke-rounded.svg" alt="rating"></img>
-          <img src="src/star-stroke-rounded.svg" alt="rating"></img>
+          <img src={StarStrokeRounded} alt="rating"></img>
+          <img src={StarStrokeRounded} alt="rating"></img>
+          <img src={StarStrokeRounded} alt="rating"></img>
+          <img src={StarStrokeRounded} alt="rating"></img>
+          <img src={StarStrokeRounded} alt="rating"></img>
         </div>
         <h2 className="text-gray-800 font-bold">Price: ${data.price}</h2>
         <Link
