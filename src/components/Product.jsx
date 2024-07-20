@@ -1,4 +1,4 @@
-import React from "react";
+import React,{memo} from "react";
 import { Link } from "react-router-dom";
 import StarStrokeRounded from "../star-stroke-rounded.svg";
 function Product(data) {
@@ -28,4 +28,4 @@ function Product(data) {
   );
 }
 
-export default Product;
+export default memo(Product);
