@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState} from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   MdOutlineArrowBackIos,
@@ -11,13 +11,17 @@ import Error from "../Error";
 function Detail({handleCart}) {
   const param = useParams();
   const id = param.id;
-
   const [product, setp] = useState();
   const [loading, setload] = useState(true);
   const [count, setCount] = useState(1);
 
-  function setCart(event) {
+  function setCart(event){
+    if(+event.target.value<=0){
+      setCount(1);
+    }
+    else{
     setCount(+event.target.value);
+    }
   }
 
   function changeCart() {
