@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import Products from "./Products.jsx";
 import NoMatch from "../NoMatchFound.jsx";
 import getData from "../Api.js";
+import { ImSpinner6 } from "react-icons/im";
+
 function Home() {
   const [ProductList, setLists] = useState([]);
   useEffect(function () {
@@ -49,7 +51,7 @@ function Home() {
     setflt(event.target.value);
   }
   if (ProductList.length == 0) {
-    return <div className="text-4xl self-center">Loading...</div>;
+    return <ImSpinner6 className="text-6xl mx-auto w-full animate-spin" />;
   }
   return (
     <div id="main" class="bg-gray-200">
