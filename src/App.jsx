@@ -6,7 +6,9 @@ import Home from "./components/Home.jsx";
 import Detail from "./components/ProductDetail.jsx";
 import { Error1 } from "./Error.jsx";
 import Cart from "./components/Cart.jsx";
-import SignupPage from "./components/SignupPage.jsx";
+import Login from "./components/SignInPage.jsx";
+import SignUp from "./components/SignUpPage.jsx";
+import Forgot from "./components/ForgotPage.jsx";
 
 function App() {
   const savedData = localStorage.getItem("added-item") || "{}";
@@ -53,9 +55,10 @@ function App() {
           path="/cart"
           element={<Cart cart={cart} recent_cart={updateCart} />}
         ></Route>
-        <Route path="/signup" element={<SignupPage />}></Route>
-
         <Route path="*" element={<Error1 />}></Route>
+        <Route path="/login" element={<Login />}></Route>
+        <Route path="/sign_up" element={<SignUp />}></Route>
+        <Route path="/forgot" element={<Forgot />}></Route>
       </Routes>
       <Footer />
     </div>
