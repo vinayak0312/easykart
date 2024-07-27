@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   MdOutlineArrowBackIos,
@@ -7,20 +7,21 @@ import {
 import { getProduct } from "../Api";
 import { ImSpinner6 } from "react-icons/im";
 import Error from "../Error";
+import SelfModifiedInput from "../SelfModifiedInput.jsx";
+import AddToCart from "./AddToCart";
 
-function Detail({handleCart}) {
+function Detail({ handleCart }) {
   const param = useParams();
   const id = param.id;
   const [product, setp] = useState();
   const [loading, setload] = useState(true);
   const [count, setCount] = useState(1);
 
-  function setCart(event){
-    if(+event.target.value<=0){
+  function setCart(event) {
+    if (+event.target.value <= 0) {
       setCount(1);
-    }
-    else{
-    setCount(+event.target.value);
+    } else {
+      setCount(+event.target.value);
     }
   }
 
@@ -70,20 +71,18 @@ function Detail({handleCart}) {
           <h2 className="text-xl font-bold text-gray-900">{product.title}</h2>
           <p className="text-lg text-gray-700 mt-2">${product.price}</p>
           <p className="text-gray-600 mt-4">{product.description}</p>
-          <div className="mt-6 flex">
-            <input
-              type="number"
+          <div className="flex flex-wrap gap-3">
+            <SelfModifiedInput
               onChange={setCart}
+              type="number"
               value={count}
-              className="w-16 p-2 border border-gray-300 rounded-md"
-              min="1"
+              id="quantity"
+              label="Quantity"
+              name="quantity"
+              labelClasses="sr-only"
+              extraClasses="border rounded-md py-2 px-2 max-w-8"
             />
-            <button
-              onClick={changeCart}
-              className="ml-4 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-            >
-              ADD TO CART
-            </button>
+            <AddToCart id={id} count={count} />
           </div>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import React, { memo } from "react";
 import { RxCrossCircled } from "react-icons/rx";
+import SelfModifiedInput from "../SelfModifiedInput";
 
 function CartProductDetail({ cart, quantity, dummy_change, dummy_quan }) {
   function changeQuantity(event) {
@@ -30,12 +31,13 @@ function CartProductDetail({ cart, quantity, dummy_change, dummy_quan }) {
         <h2 className="bold text-xl flex-1 text-center">
           ${cart.price.toFixed(2)}
         </h2>
-
-        <input
-          type="number"
-          className="border py-2 px-4 text-center w-20"
-          value={quantity}
+        <SelfModifiedInput
+          extraClasses="self-center max-w-12 py-1 px-1 border rounded-md bg-gray-50"
           onChange={changeQuantity}
+          value={quantity}
+          type="number"
+          label="Quantity"
+          labelClasses="sr-only"
         />
         <h2 className="bold text-xl flex-1 text-right">
           ${(cart.price * quantity).toFixed(2)}
