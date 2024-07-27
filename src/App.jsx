@@ -1,14 +1,17 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, createContext } from "react";
 import { Routes, Route } from "react-router-dom";
 import Footer from "./components/Footer.jsx";
 import Header from "./components/Header.jsx";
 import Home from "./components/Home.jsx";
 import Detail from "./components/ProductDetail.jsx";
-import { Error1 } from "./Error.jsx";
+import { Error1 as Error } from "./Error.jsx";
 import Cart from "./components/Cart.jsx";
 import Login from "./components/SignInPage.jsx";
 import SignUp from "./components/SignUpPage.jsx";
 import Forgot from "./components/ForgotPage.jsx";
+import Logo from "./EasyKart Logo.webp";
+
+export const CreateContext = createContext();
 
 function App() {
   const savedData = localStorage.getItem("added-item") || "{}";
@@ -44,23 +47,19 @@ function App() {
 
   return (
     <div className="flex flex-col h-screen justify-between">
-      <Header count={totalCount} />
-      <Routes>
-        <Route index element={<Home />}></Route>
-        <Route
-          path="/product/:id"
-          element={<Detail handleCart={addToCart} />}
-        ></Route>
-        <Route
-          path="/cart"
-          element={<Cart cart={cart} recent_cart={updateCart} />}
-        ></Route>
-        <Route path="*" element={<Error1 />}></Route>
-        <Route path="/login" element={<Login />}></Route>
-        <Route path="/sign_up" element={<SignUp />}></Route>
-        <Route path="/forgot" element={<Forgot />}></Route>
-      </Routes>
-      <Footer />
+      <CreateContext.Provider value={addToCart}>
+        <Header count={totalCount} src={Logo} />
+        <Routes>
+          <Route index element={<Home />}></Route>
+          <Route path="/product/:id" element={<Detail />}></Route>
+          <Route path="*" element={<Error name="Page" />}></Route>
+          <Route path="/cart" element={<Cart cart={cart} recent_cart={updateCart} />}></Route>
+          <Route path="/login" element={<Login />}></Route>
+          <Route path="/sign_up" element={<SignUp />}></Route>
+          <Route path="/forgot" element={<Forgot />}></Route>
+        </Routes>
+        <Footer />
+      </CreateContext.Provider>
     </div>
   );
 }

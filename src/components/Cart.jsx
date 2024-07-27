@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import CartProductDetail from "./CartRow";
 import { ImSpinner6 } from "react-icons/im";
 import { getProduct } from "../Api";
+import SelfModifiedInput from "../SelfModifiedInput";
 
 function Cart({ cart, recent_cart }) {
   const [cart_product, setCart] = useState([]);
@@ -98,8 +99,11 @@ function Cart({ cart, recent_cart }) {
 
         <div className="flex justify-between mt-4">
           <div className="flex gap-2">
-            <input
-              className="border border-gray-200 py-1 px-2"
+            <SelfModifiedInput
+              extraClasses="py-1 px-2 border rounded-md"
+              labelClasses="sr-only"
+              label="Coupon"
+              id="Coupon"
               type="text"
               placeholder="Coupon Code"
             />
