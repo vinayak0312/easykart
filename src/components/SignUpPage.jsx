@@ -1,135 +1,133 @@
-import React, { useState } from "react";
-import { Formik, Form } from "formik";
+import React from "react";
+import { withFormik } from "formik";
 import { Link } from "react-router-dom";
-import { MdOutlineArrowBackIos } from "react-icons/md";
 import * as Yup from "yup";
-import { SelfFormikInput } from "../SelfModifiedInput";
-import Created from "./AccountCreated";
-import Button from "./Button2.jsx";
+import SelfFormikInput from "../SelfModifiedInput";
+import Button from "./Button2";
+import axios from "axios";
 
-function SignUp() {
-  const [pass, setPass] = useState(false);
-  const [accountCreated, setAccountCreated] = useState(false);
+function createAccount(values, props) {
+  axios
+    .post("https://myeasykart.codeyogi.io/signup", {
+      fullName: values.username,
+      email: values.email,
+      password: values.password,
+    })
+    .then((response) => {
+      const { user, token } = response.data;
+      localStorage.setItem("token", token);
+      props.props.setUser(user);
+      props.props.setAlert({
+        type: "success",
+        message: "Welcome " + user.full_name + "!",
+      });
+    })
+    .catch(() => {
+      props.props.setAlert({
+        type: "error",
+        message: "Email already exists!",
+      });
+    });
+}
 
-  function createAccount(values) {
-    if (values.password !== values.confirm_password) {
-      setPass(true);
-    } else {
-      console.log(
-        values.username,
-        values.dateOfBirth,
-        values.email,
-        values.password,
-        values.confirm_password
-      );
-      setPass(false);
-      setAccountCreated(true);
-    }
-  }
+const schema = Yup.object().shape({
+  username: Yup.string().required("Please enter your name"),
+  email: Yup.string().required("Please fill your email"),
+  password: Yup.string()
+    .required("Please Enter password")
+    .min(8, "Password must be at least 8 characters")
+    .test(
+      "numberPresent",
+      "Password must contain a number and a special character",
+      (value) => {
+        const hasNumber = /\d/.test(value);
+        const hasSpecialChar = /[!@#$%^&*]/.test(value);
+        return hasNumber && hasSpecialChar;
+      }
+    ),
+  confirm_password: Yup.string()
+    .oneOf([Yup.ref("password"), null], "Passwords must match")
+    .required("Please confirm your password"),
+});
 
-  const schema = Yup.object().shape({
-    username: Yup.string().required("Please enter your name"),
-    dateOfBirth: Yup.string().required("Please enter your date of birth"),
-    email: Yup.string()
-      .email("Invalid email format")
-      .required("Please fill your email"),
-    password: Yup.string()
-      .required("Please enter password")
-      .min(8, "Password must be at least 8 characters"),
-    confirm_password: Yup.string()
-      .oneOf([Yup.ref("password"), null], "Passwords must match")
-      .required("Please confirm your password"),
-  });
-
-  if (accountCreated) {
-    return <Created />;
-  }
-
+function sign_up({ handleSubmit, handleBlur, handleChange, touched, errors }) {
   return (
-    <div className="flex items-center justify-center bg-gradient-to-r from-blue-100 via-white to-blue-100">
-      <div className="w-full max-w-lg p-8 bg-white rounded-2xl shadow-2xl">
-        <Link className="flex items-center text-blue-600 hover:underline" to="/">
-          <MdOutlineArrowBackIos className="text-2xl" />
-          <span className="ml-1">Back</span>
-        </Link>
-        <div className="text-center mt-4">
-          <h1 className="text-4xl font-bold text-gray-800">EasyKart</h1>
-          <h2 className="mt-2 text-xl font-semibold text-gray-600">Sign Up</h2>
-        </div>
-        <Formik
-          initialValues={{
-            username: "",
-            dateOfBirth: "",
-            email: "",
-            password: "",
-            confirm_password: "",
-          }}
-          validationSchema={schema}
-          onSubmit={createAccount}
-        >
-          <Form className="mt-6 space-y-4">
-            <SelfFormikInput
-              name="username"
-              id="username"
-              type="text"
-              label="Name"
-              extraClasses="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-              labelClasses="text-gray-900 text-lg"
-            />
-            <SelfFormikInput
-              name="dateOfBirth"
-              id="dateOfBirth"
-              type="date"
-              label="Date Of Birth"
-              extraClasses="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-              labelClasses="text-gray-900 text-lg"
-            />
-            <SelfFormikInput
-              name="email"
-              id="email"
-              type="email"
-              label="Email"
-              extraClasses="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-              labelClasses="text-gray-900 text-lg"
-            />
-            <SelfFormikInput
-              name="password"
-              id="password"
-              type="password"
-              label="Password"
-              extraClasses="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-              labelClasses="text-gray-900 text-lg"
-            />
-            <SelfFormikInput
-              name="confirm_password"
-              id="confirm_password"
-              type="password"
-              label="Confirm Password"
-              extraClasses="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-              labelClasses="text-gray-900 text-lg"
-            />
-            {pass && (
-              <p className="text-red-500">
-                Password and Confirm password are not the same
-              </p>
-            )}
-            <button
-              type="submit"
-              className="w-full px-6 py-3 mt-2 text-xl font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-blue-300"
-            >
-              Create Account
-            </button>
-            <p className="mt-2 text-sm text-center text-gray-600">
-              Already have an account?{" "}
-              <Link className="font-medium text-blue-600 hover:underline" to="/login">
-                Sign in
-              </Link>
-            </p>
-          </Form>
-        </Formik>
+    <div className="flex items-center justify-center bg-gray-100 ">
+      <div className="flex flex-col p-6 gap-6 w-full max-w-md bg-white border rounded-xl">
+        <h1 className="self-center text-gray-600 text-3xl">EasyKart</h1>
+        <h2 className="text-2xl font-bold">Sign up</h2>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <SelfFormikInput
+            name="username"
+            id="username"
+            type="text"
+            label="Name"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            touched={touched.username}
+            error={errors.username}
+            extraClasses="border rounded-md border-yellow-400 py-2 px-3"
+            labelClasses="text-gray-900 text-lg"
+          />
+          <SelfFormikInput
+            name="email"
+            id="email"
+            type="email"
+            label="Email"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            touched={touched.email}
+            error={errors.email}
+            extraClasses="border rounded-md border-yellow-400 py-2 px-3"
+            labelClasses="text-gray-900 text-lg"
+          />
+          <SelfFormikInput
+            name="password"
+            id="password"
+            type="password"
+            label="Password"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            touched={touched.password}
+            error={errors.password}
+            extraClasses="border rounded-md border-yellow-400 py-2 px-3"
+            labelClasses="text-gray-900 text-lg"
+          />
+          <SelfFormikInput
+            name="confirm_password"
+            id="confirm_password"
+            type="password"
+            label="Confirm Password"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            touched={touched.confirm_password}
+            error={errors.confirm_password}
+            extraClasses="border rounded-md border-yellow-400 py-2 px-3"
+            labelClasses="text-gray-900 text-lg"
+          />
+          <Button name="Create Account" />
+          <p className="self-center">
+            Already have an account?{" "}
+            <Link className="text-blue-600" to="/login">
+              Sign in
+            </Link>
+          </p>
+        </form>
       </div>
     </div>
   );
 }
 
-export default SignUp;
+const myHOC = withFormik({
+  initialValues: {
+    username: "",
+    email: "",
+    password: "",
+    confirm_password: "",
+  },
+  handleSubmit: createAccount,
+  validationSchema: schema,
+});
+
+export default myHOC(sign_up);
+export const SignUp = sign_up;

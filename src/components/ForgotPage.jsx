@@ -1,68 +1,61 @@
 import React from "react";
-import { Formik, Form } from "formik";
+import { withFormik } from "formik";
 import { Link } from "react-router-dom";
 import { MdOutlineArrowBackIos } from "react-icons/md";
 import * as Yup from "yup";
-import { FormikInput } from "./Input";
+import Input from "./Input";
+import NormalButton from "./Button";
+import FormButton from "./Button2";
 
-function ForgotPassword() {
-  function sendData(values) {
-    console.log(values.email);
-  }
+function sendData(values) {
+  console.log(values.email);
+}
 
-  const schema = Yup.object().shape({
-    email: Yup.string()
-      .email("Invalid email format")
-      .required("Please fill your email"),
-  });
+const schema = Yup.object().shape({
+  email: Yup.string().required("Please fill your email"),
+});
 
+function forgot({
+  handleSubmit,
+  handleChange,
+  handleBlur,
+  touched,
+  errors,
+  values,
+}) {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-100 via-white to-blue-100">
-      <div className="w-full max-w-md p-8 bg-white rounded-2xl shadow-2xl">
-        <Link className="flex items-center text-blue-600 hover:underline" to="/">
-          <MdOutlineArrowBackIos className="text-2xl" />
-          <span className="ml-1">Back</span>
-        </Link>
-        <div className="text-center mt-4">
-          <h1 className="text-4xl font-bold text-gray-800">EasyKart</h1>
-          <h2 className="mt-2 text-xl font-semibold text-gray-600">
-            Forgot Password
-          </h2>
-        </div>
-        <Formik
-          initialValues={{
-            email: "",
-          }}
-          validationSchema={schema}
-          onSubmit={sendData}
-        >
-          <Form className="mt-6 space-y-4">
-            <FormikInput
-              name="email"
-              id="email"
-              type="email"
-              label="Email"
-              extraClasses="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-              labelClasses="text-gray-900 text-lg"
-            />
-            <button
-              type="submit"
-              className="w-full px-6 py-3 mt-2 text-xl font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
-            >
-              Send Password
-            </button>
-            <div className="flex justify-center mt-4">
-              <Link className="text-blue-600 hover:underline" to="/login">
-                <button className="px-6 py-3 text-xl font-medium text-white bg-gray-600 rounded-md hover:bg-gray-700">
-                  Cancel
-                </button>
-              </Link>
-            </div>
-          </Form>
-        </Formik>
+    <div className="flex items-center justify-center bg-gray-100 min-h-screen">
+      <div className="flex flex-col p-6 gap-6 w-full max-w-md bg-white border rounded-xl">
+        <h1 className="self-center text-gray-600 text-3xl">EasyKart</h1>
+        <h2 className="text-2xl font-bold">Forgot Password</h2>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <Input
+            name="email"
+            id="email"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            type="email"
+            label="Email"
+            error={errors.email}
+            touched={touched.email}
+          />
+          <FormButton name="Send Password" />
+          <Link className="self-center mt-4" to="/login">
+            <NormalButton name="Cancel" />
+          </Link>
+        </form>
       </div>
     </div>
   );
 }
 
-export default ForgotPassword;
+const myHOC = withFormik({
+  initialValues: {
+    email: "",
+  },
+  handleSubmit: sendData,
+  validationSchema: schema,
+});
+
+export default myHOC(forgot);
+export const Forgot = forgot;

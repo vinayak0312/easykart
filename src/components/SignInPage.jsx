@@ -1,88 +1,97 @@
 import React from "react";
-import { Formik, Form } from "formik";
+import { withFormik } from "formik";
 import { Link } from "react-router-dom";
-import { MdOutlineArrowBackIos } from "react-icons/md";
 import * as Yup from "yup";
-import { FormikInput } from "./Input";
+import Input from "./Input";
+import Button from "./Button2";
+import axios from "axios";
 
-function LoginPage() {
-  function sendData(values) {
-    console.log(values.email, values.password);
-  }
+function sendData(values, props) {
+  axios
+    .post("https://myeasykart.codeyogi.io/login", {
+      email: values.email,
+      password: values.password,
+    })
+    .then((response) => {
+      const { user, token } = response.data;
+      localStorage.setItem("token", token);
+      props.props.setUser(user);
+      console.log(user);
+      props.props.setAlert({
+        type: "success",
+        message: "Welcome Back " + user.full_name + "!",
+      });
+    })
+    .catch(() => {
+      props.props.setAlert({
+        type: "error",
+        message: "Invalid email address or Password",
+      });
+    });
+}
 
-  const schema = Yup.object().shape({
-    email: Yup.string().required("Please fill your email"),
-    password: Yup.string().required("Please enter your password"),
-  });
+const schema = Yup.object().shape({
+  email: Yup.string().required("Please fill your email"),
+  password: Yup.string().required("Please enter your password"),
+});
 
+function login_page({
+  touched,
+  errors,
+  handleChange,
+  handleBlur,
+  handleSubmit,
+}) {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-100 via-white to-blue-100">
-      <div className="w-full max-w-lg p-10 bg-white rounded-2xl shadow-2xl">
-        <Link
-          className="flex items-center text-blue-600 hover:underline"
-          to="/"
-        >
-          <MdOutlineArrowBackIos className="text-2xl" />
-          <span className="ml-1">Back</span>
-        </Link>
-        <div className="text-center mt-6">
-          <h1 className="text-4xl font-bold text-gray-800">EasyKart</h1>
-          <h2 className="mt-2 text-xl font-semibold text-gray-600">Sign in</h2>
-        </div>
-        <Formik
-          initialValues={{
-            email: "",
-            password: "",
-          }}
-          validationSchema={schema}
-          onSubmit={sendData}
-        >
-          <Form className="mt-8 space-y-6">
-            <FormikInput
-              name="email"
-              id="email"
-              type="email"
-              label="Email"
-              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-
-            <FormikInput
-              name="password"
-              id="password"
-              type="password"
-              label="Password"
-              className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-
-            <div className="flex items-center justify-between mt-4">
-              <Link
-                className="text-sm font-medium text-blue-600 hover:underline"
-                to="/forgot"
-              >
-                Forgot Password?
-              </Link>
-            </div>
-            <button
-              type="submit"
-              className="w-full px-4 py-2 mt-4 text-xl font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:bg-blue-300"
-              // disabled={!isValid}
-            >
-              Log in
-            </button>
-            <p className="mt-6 text-sm text-center text-gray-600">
-              New User?{" "}
-              <Link
-                className="font-medium text-blue-600 hover:underline"
-                to="/sign_up"
-              >
-                Sign up
-              </Link>
-            </p>
-          </Form>
-        </Formik>
+    <div className="flex items-center justify-center bg-gray-100 min-h-screen">
+      <div className="flex flex-col p-6 gap-6 w-full max-w-md bg-white border rounded-xl">
+        <h1 className="self-center text-gray-600 text-3xl">EasyKart</h1>
+        <h2 className="text-2xl font-bold">Sign in</h2>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <Input
+            name="email"
+            id="email"
+            type="email"
+            label="Email"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            touched={touched.email}
+            error={errors.email}
+          />
+          <Link className="text-blue-600 self-end" to="/forgot">
+            Forgot Password?
+          </Link>
+          <Input
+            name="password"
+            id="password"
+            type="password"
+            label="Password"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            touched={touched.password}
+            error={errors.password}
+          />
+          <Button name="Log In" />
+          <p className="self-center">
+            New User? Create Account{" "}
+            <Link className="text-blue-600" to="/sign_up">
+              Sign up
+            </Link>
+          </p>
+        </form>
       </div>
     </div>
   );
 }
 
-export default LoginPage;
+const myHOC = withFormik({
+  initialValues: {
+    email: "",
+    password: "",
+  },
+  handleSubmit: sendData,
+  validationSchema: schema,
+});
+
+export default myHOC(login_page);
+export const Login = login_page;

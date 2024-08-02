@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState,useCallback } from "react";
+import React, { useEffect, useMemo, useState, useCallback } from "react";
 import Products from "./Products.jsx";
 import NoMatch from "../NoMatchFound.jsx";
 import getData from "../Api.js";
@@ -18,12 +18,12 @@ function Home() {
   let data = [...ProductList];
   useMemo(
     function () {
-      if (flt != "") {
+      if (flt !== "") {
         data = data.filter(function (item) {
           const categ = item.category.toLowerCase();
           const nme = item.title.toLowerCase();
           const filt = flt.toLowerCase();
-          return categ.indexOf(filt) != -1 || nme.indexOf(filt) != -1;
+          return categ.indexOf(filt) !== -1 || nme.indexOf(filt) !== -1;
         });
       }
     },
@@ -31,22 +31,22 @@ function Home() {
   );
   useMemo(
     function () {
-      if (srt == "Low to high Price") {
+      if (srt === "Low to high Price") {
         data.sort(function (x, y) {
           return x.price - y.price;
         });
       }
-      if (srt == "High to low Price") {
+      if (srt === "High to low Price") {
         data.sort(function (x, y) {
           return y.price - x.price;
         });
       }
-      if (srt == "Rating") {
+      if (srt === "Rating") {
         data.sort(function (x, y) {
           return y.rating - x.rating;
         });
       }
-      if (srt == "Category") {
+      if (srt === "Category") {
         data.sort(function (x, y) {
           return y.category > x.category ? -1 : 1;
         });
@@ -66,23 +66,27 @@ function Home() {
     },
     [flt]
   );
-  if (ProductList.length == 0) {
+  if (ProductList.length === 0) {
     return <ImSpinner6 className="text-6xl mx-auto w-full animate-spin" />;
   }
   return (
-    <div id="main" class="bg-gray-200">
-      <div className="flex flex-col gap-5 my-10 mx-auto bg-white w-[80vw] p-[108px]">
-        <div className="flex justify-between">
+    <div id="main" className="bg-gray-200 min-h-screen p-4">
+      <div className="flex flex-col gap-5 my-10 mx-auto bg-white w-full max-w-4xl p-6 md:p-8 lg:p-10 rounded-xl shadow-md">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
           <SelfModifiedInput
             type="text"
             label="Filter"
             labelClasses="sr-only"
             id="filter"
-            extraClasses="border py-1 rounded-md border-gray-500 px-2 max-w-60"
-            placeholder="Filter By category or title"
+            extraClasses="border py-2 rounded-md border-gray-500 px-3 w-full sm:max-w-xs"
+            placeholder="Filter by category or title"
             onChange={Filtered}
           />
-          <select onChange={sortMethod} value={srt}>
+          <select
+            onChange={sortMethod}
+            value={srt}
+            className="border py-2 rounded-md border-gray-500 px-3 w-full sm:w-auto"
+          >
             <option>Default</option>
             <option>Low to high Price</option>
             <option>High to low Price</option>
@@ -92,30 +96,30 @@ function Home() {
         </div>
         <div>
           {data.length > 0 && <Products items={data} />}
-          {data.length == 0 && <NoMatch />}
+          {data.length === 0 && <NoMatch />}
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 justify-center">
           <a
-            className="px-2  border text-red-500 border-red-500 rounded-sm"
-            href=""
+            className="px-2 border text-red-500 border-red-500 rounded-sm"
+            href="#"
           >
             1
           </a>
           <a
-            className="px-2  border text-red-500 border-red-500 rounded-sm"
-            href=""
+            className="px-2 border text-red-500 border-red-500 rounded-sm"
+            href="#"
           >
             2
           </a>
           <a
-            className="px-2  border text-red-500 border-red-500 rounded-sm"
-            href=""
+            className="px-2 border text-red-500 border-red-500 rounded-sm"
+            href="#"
           >
             3
           </a>
           <a
-            className="px-2  border text-red-500 border-red-500 rounded-sm"
-            href=""
+            className="px-2 border text-red-500 border-red-500 rounded-sm"
+            href="#"
           >
             →
           </a>
@@ -124,4 +128,5 @@ function Home() {
     </div>
   );
 }
+
 export default Home;
